@@ -1,5 +1,8 @@
+from tkinter import Button, Tk, Toplevel, Frame, N,S,E,W,X,Y, LEFT,RIGHT, END, Scrollbar, Text, Message, Grid, StringVar
+from Game import Game, GameError
+from sys import stderr
+from itertools import product
 from abc import ABC, abstractmethod
-from Game import Game
 
 class Ui(ABC):
 
@@ -20,15 +23,23 @@ class Terminal(Ui):
 
     def run(self):
         while not self._game.winner:
-            print(self._game)
-            row = int(input("Which row? "))
-            col = int(input("Which column? "))
-            self._game.play(row,col)
+            while True:
+                print(self._game)
+                try:
+                    row = int(input("Which row? "))
+                    col = int(input("Which column? "))
+                except ValueError:
+                    print(f"Row and Column should be numbers in the range 1-{self._game._DIM}.")
+                    continue
+                try:
+                    self._game.play(row,col)
+                    break
+                except GameError as e:
+                    print(f"Game error {e}",file=stderr)
 
         print(self._game)
-        print(f"The winner was {self._game.winner}")
-
-if __name__ == "__main__":
-    ui = Terminal()
-    ui.run()
-    
+        w = self._game.winner
+        if w is Game.DRAW:
+            print("The game was drawn")
+        else:
+            print(f"The winner was {w}")
