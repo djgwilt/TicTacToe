@@ -11,7 +11,15 @@ class Game:
         self._player = Game.P1
 
     def __repr__(self):
-        return ""
+        result = "  " + " ".join(str(i+1) for i in range(Game.DIM))
+        for row in range(Game.DIM):
+            result += f"\n{row+1} " + "|".join(self._board[row])
+            if row != Game.DIM - 1:
+                dashes = "-" * (2 * Game.DIM - 1)
+                result += f"\n  {dashes}"
+
+        result += f"\n\n{self._player} turn to play"
+        return result
 
     def play(self,row,col):
         row -= 1
@@ -21,7 +29,22 @@ class Game:
     
     @property
     def winner(self):
-        pass
+        for p in [Game.P1,Game.P2]:
+            for row in range(Game.DIM):
+                if all(self._board[row][col] is p for col in range(Game.DIM)):
+                    return p
+            for col in range(Game.DIM):
+                if all(self._board[row][col] is p for row in range(Game.DIM)):
+                    return p
+            # Diagonals
+            if all(self._board[i][i] is p for i in range(Game.DIM)):
+                return p
+            if all(self._board[i][2 - i] is p for i in range(Game.DIM)):
+                return p
+        # No winner
+        return None
+
 
 if __name__ == "__main__":
-    pass
+    g = Game()
+    print(g)
