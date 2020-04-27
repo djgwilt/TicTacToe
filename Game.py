@@ -26,13 +26,17 @@ class Game:
         result += f"\n\n{self._player} turn to play"
         return result
 
-    def play(self,row,col):
+    def _validate(self,row,col):
         if not (0 < row <= Game._DIM):
             raise GameError(f"Row {row} not in range")
         if not (0 < col <= Game._DIM):
             raise GameError(f"Column {col} not in range")
         row -= 1
         col -= 1
+        return row,col
+
+    def play(self,row,col):
+        row,col = self._validate(row,col)
         if self._board[row][col] is not Game._EMPTY:
             raise GameError("You must play in an empty space")
         self._board[row][col] = self._player
@@ -58,8 +62,7 @@ class Game:
         return None
 
     def at(self,row,col):
-        row -= 1
-        col -= 1
+        row,col = self._validate(row,col)
         return self._board[row][col]
 
     @property
